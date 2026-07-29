@@ -1,0 +1,162 @@
+<div *ngIf="transactionSpendingLimitResponse">
+  <div>
+    <div
+      *ngIf="!transactionSpendingLimitResponse?.IsUnlimited"
+      class="box--rounded box--border box--base margin-top--medium display--flex items--center justify--between flex--column--tablet gap--15--tablet"
+    >
+      <div class="text-left">Cumulative Spending Limit</div>
+      <code class="font-size--medium">
+        {{
+          globalVars.nanosToDeSo(
+            transactionSpendingLimitResponse.GlobalDESOLimit || 0,
+            4
+          )
+        }}
+        DESO
+      </code>
+    </div>
+
+    <div class="margin-top--large margin-bottom--large">
+      <p
+        class="margin-bottom--small font-size--small text--text-lighter margin-bottom--base"
+      >
+        By clicking approve, you are granting all of the listed permissions to
+        {{ globalVars.hostname }}
+      </p>
+      <button
+        data-control-name="tx-spending-limit-approve-button"
+        [attr.data-control-is-unlimited]="
+          this.transactionSpendingLimitResponse.IsUnlimited
+        "
+        [attr.data-control-is-full-access-host]="
+          this.globalVars.isFullAccessHostname()
+        "
+        [attr.data-control-tx-memo]="
+          this.transactionSpendingLimitResponse.DerivedKeyMemo
+        "
+        class="button--primary button--medium"
+        (click)="this.onApproveClickWrapper()"
+        [disabled]="this.isPendingApprove"
+      >
+        <span *ngIf="!this.isPendingApprove; else loadingSpinner"
+          >Yes, I Approve</span
+        >
+        <ng-template #loadingSpinner>
+          <div
+            class="spinner-border margin-left--xsmall"
+            style="width: 25px; height: 25px"
+          ></div>
+        </ng-template>
+      </button>
+    </div>
+
+    <div
+      class="margin-top--large text--center"
+      *ngIf="transactionSpendingLimitResponse?.IsUnlimited"
+    >
+      <div *ngIf="this.globalVars.isFullAccessHostname(); else elseBlock">
+        By clicking approve, you are granting
+        <strong>{{ globalVars.hostname }}</strong> unlimited signing access for
+        your account.
+      </div>
+      <ng-template #elseBlock>
+        <div class="warning-text">
+          By clicking approve, you are granting
+          <strong>{{ globalVars.hostname }}</strong> unlimited signing access
+          for your account.
+        </div>
+      </ng-template>
+    </div>
+
+    <div *ngIf="transactionSpendingLimitResponse.DerivedKeyMemo">
+      <div class="flex-grow-1 padding-top-medium"></div>
+      <div class="padding-bottom--medium margin-bottom--small">
+        <div class="font-size--medium">Memo</div>
+        <div>{{ transactionSpendingLimitResponse.DerivedKeyMemo }}</div>
+      </div>
+    </div>
+
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.TransactionCountLimitMap"
+      [sectionTitle]="
+        TransactionSpendingLimitComponent.TransactionLimitsSection
+      "
+      *ngIf="transactionSpendingLimitResponse.TransactionCountLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="
+        transactionSpendingLimitResponse.CreatorCoinOperationLimitMap
+      "
+      [sectionTitle]="
+        TransactionSpendingLimitComponent.CreatorCoinLimitsSection
+      "
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.CreatorCoinOperationLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.DAOCoinOperationLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.DAOCoinLimitsSection"
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.DAOCoinOperationLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.NFTOperationLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.NFTLimitsSection"
+      *ngIf="transactionSpendingLimitResponse.NFTOperationLimitMap"
+    >
+    </app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.DAOCoinLimitOrderLimitMap"
+      [sectionTitle]="
+        TransactionSpendingLimitComponent.DAOCoinLimitOrderLimitSection
+      "
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.DAOCoinLimitOrderLimitMap"
+    >
+    </app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.AssociationLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.AssociationSection"
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.AssociationLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.AccessGroupLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.AccessGroupSection"
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.AccessGroupLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.AccessGroupMemberLimitMap"
+      [sectionTitle]="
+        TransactionSpendingLimitComponent.AccessGroupMemberSection
+      "
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.AccessGroupMemberLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.StakeLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.StakeSection"
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.StakeLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.UnstakeLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.UnstakeSection"
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.UnstakeLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.UnlockStakeLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.UnlockStakeSection"
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.UnlockStakeLimitMap"
+    ></app-transaction-spending-limit-section>
+    <app-transaction-spending-limit-section
+      [sectionMap]="transactionSpendingLimitResponse.LockupLimitMap"
+      [sectionTitle]="TransactionSpendingLimitComponent.LockupSection"
+      [userMap]="userMap"
+      *ngIf="transactionSpendingLimitResponse.LockupLimitMap"
+    ></app-transaction-spending-limit-section>
+  </div>
+</div>

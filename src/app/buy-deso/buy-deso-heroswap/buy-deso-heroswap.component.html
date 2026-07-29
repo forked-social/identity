@@ -1,0 +1,22 @@
+<div class="display--flex flex--column" style="height: 75vh">
+  <iframe
+    [src]="iframeURL"
+    class="border-0 rounded w-100 h-100"
+    *ngIf="iframeURL; else elseBlockIframe"
+  ></iframe>
+  <ng-template #elseBlockIframe>
+    <p class="text--center">
+      <i class="fas fa-exclamation-triangle"></i> Unable to render iFrame.<br />Invalid
+      HeroSwap URL.
+    </p>
+  </ng-template>
+  <div class="display--flex justify--center">
+    <button
+      data-control-name="buy-deso-finish-flow-button"
+      (click)="finishFlow()"
+      class="button--primary button--medium margin-top--large margin-bottom--medium"
+    >
+      Continue
+    </button>
+  </div>
+</div>

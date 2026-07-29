@@ -1,0 +1,39 @@
+<div class="section--accounts" *ngIf="hasUsers">
+  <div class="section--accounts__header margin-bottom--medium">
+    {{ componentTitle }}
+  </div>
+  <ul class="section--accounts__list container--scrollbar margin-bottom--small">
+    <li
+      *ngFor="let item of allUsers | async | keyvalue; let i = index"
+      class="section--accounts__item"
+      (click)="onAccountSelect.emit(item.key)"
+      data-control-name="account-select-item"
+    >
+      <div>
+        <div *ngIf="!item.value.username">
+          <img
+            class="avatar--rounded avatar--large margin-right--xsmall"
+            src="assets/placeholder-account-image.png"
+          />
+          {{ item.key | truncateAddressOrUsername }}
+        </div>
+        <div *ngIf="item.value.username">
+          <img
+            class="avatar--rounded avatar--large margin-right--xsmall"
+            [appAvatar]="item.key"
+          />
+          {{ item.value.username | truncateAddressOrUsername }}
+        </div>
+      </div>
+      <img
+        *ngIf="!hideLoginMethod"
+        [src]="
+          getLoginIcon(
+            accountService.getLoginMethodWithPublicKeyBase58Check(item.key)
+          )
+        "
+        class="section--accounts__icon"
+      />
+    </li>
+  </ul>
+</div>

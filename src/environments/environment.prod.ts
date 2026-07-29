@@ -1,0 +1,21 @@
+export const environment = {
+  production: true,
+  hostname: 'identity.deso.org',
+  nodeURL: 'https://node.deso.org',
+  fullAccessHostnames: [
+    'bitclout.com',
+    'bitclout.green',
+    'bitclout.blue',
+    'localhost',
+    'buy.deso.org',
+    'diamondapp.com',
+    'node.deso.org',
+    'signup.deso.org',
+    'signup.deso.com',
+    'openfund.com',
+  ],
+  noAccessHostnames: [''],
+  jumioSupported: false,
+  heroswapURL: 'https://heroswap.com',
+  hCaptchaSitekey: 'b358821b-bf3d-4662-a202-001eb9a769e2',
+};

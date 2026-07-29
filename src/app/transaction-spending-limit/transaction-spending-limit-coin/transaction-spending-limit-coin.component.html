@@ -1,0 +1,43 @@
+<div class="width--100 text--left">
+  <div class="display--flex justify--between text--text-lightest">
+    <div class="display--flex items--center">
+      <app-arrow-toggle (click)="expandCreator = !expandCreator">
+      </app-arrow-toggle>
+      <img
+        class="avatar--medium avatar--rounded margin-right--xsmall"
+        [appAvatar]="coinPublicKey"
+        *ngIf="coinPublicKey"
+      />
+      <div class="display--block">
+        {{
+          coinPublicKey === ''
+            ? 'All Creators'
+            : user?.ProfileEntryResponse?.Username ||
+              (coinPublicKey | truncateAddressOrUsername)
+        }}
+      </div>
+      <!-- TODO: Add verified check -->
+    </div>
+    <div class="display--flex justify--end items--center">
+      {{ getOperationsString(coinOperationMap) }}
+    </div>
+  </div>
+  <div
+    class="display--flex justify--between flex--column items--center margin-top--small"
+    *ngIf="expandCreator"
+  >
+    <div
+      class="display--flex justify--between items--center width--100 margin-bottom--small"
+    >
+      <div>Operation Type</div>
+      <div>Operation Limit</div>
+    </div>
+    <div
+      class="display--flex width--100 justify--between items--center margin-bottom--small"
+      *ngFor="let opLimit of coinOperationMap | keyvalue; let ii = index"
+    >
+      <code>{{ globalVars.cleanSpendingLimitOperationName(opLimit.key) }}</code>
+      <code>{{ globalVars.formatTxCountLimit(opLimit.value) }}</code>
+    </div>
+  </div>
+</div>

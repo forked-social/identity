@@ -1,0 +1,108 @@
+<app-banner></app-banner>
+
+<div
+  class="container"
+  *ngIf="
+    globalVars.inTab ||
+    globalVars.webview ||
+    globalVars.callback ||
+    globalVars.redirectURI
+  "
+>
+  <div class="section--login text--center margin-bottom--small">
+    <img
+      src="assets/image-lock.svg"
+      width="60"
+      class="section--accounts__illustration"
+    />
+    <div class="font-size--small margin-bottom--small text--text-lighter">
+      For Advanced Users
+    </div>
+    <h4 class="text--neutral-white">
+      Import account to access {{ globalVars.hostname }}
+    </h4>
+    <div
+      class="font-size--small margin-top--small text--center margin-bottom--large"
+    >
+      <p class="margin-bottom--xsmall">
+        Safely add your DeSo seed (mnemonic) to import your existing account.
+      </p>
+      <p class="font-weight--medium">
+        Please make sure you are on:
+        <span class="text--green-lighter">https://identity.deso.org</span>
+      </p>
+    </div>
+    <div *ngIf="loginError" class="warning--error margin-bottom--medium">
+      {{ loginError }}
+    </div>
+  </div>
+
+  <div class="section--login__option">
+    <textarea
+      [(ngModel)]="mnemonic"
+      class="input--textarea input--seed"
+      rows="2"
+      placeholder="Enter your DeSo seed only!"
+      autocapitalize="none"
+    ></textarea>
+    <div class="margin-top--small text--right">
+      <div
+        *ngIf="!advancedOpen"
+        (click)="advancedOpen = true"
+        class="link--secondary"
+        data-control-name="log-in-with-seed-advanced-toggle-button"
+      >
+        <u>Show Advanced</u>
+      </div>
+      <div
+        *ngIf="advancedOpen"
+        (click)="advancedOpen = false"
+        class="link--secondary"
+        data-control-name="log-in-with-seed-simple-toggle-button"
+      >
+        <u>Hide Advanced</u>
+      </div>
+    </div>
+
+    <div *ngIf="advancedOpen" class="margin-top--medium">
+      <div class="font-size--medium font-weight--semibold">
+        If you have a passphrase, enter it below.
+      </div>
+    </div>
+    <div *ngIf="advancedOpen" class="margin-top--small">
+      <textarea
+        [(ngModel)]="extraText"
+        class="input--textarea"
+        rows="2"
+        placeholder="Enter your passphrase"
+        autocapitalize="none"
+      ></textarea>
+    </div>
+
+    <div *ngIf="advancedOpen" class="margin-top--medium">
+      <div class="font-size--medium font-weight--semibold">
+        If you have a seed hex instead of a DeSo seed phrase, enter it below.
+      </div>
+    </div>
+    <div *ngIf="advancedOpen" class="margin-top--small">
+      <textarea
+        [(ngModel)]="seedHex"
+        class="input--textarea"
+        rows="2"
+        placeholder="Enter your seed hex"
+        autocapitalize="none"
+      ></textarea>
+    </div>
+    <button
+      data-control-name="log-in-with-seed-load-account-button"
+      (click)="clickLoadAccount()"
+      class="button--primary button--medium margin-top--medium"
+    >
+      Load DeSo Account
+    </button>
+  </div>
+  <div class="warning--error warning--error--medium margin-top--base">
+    Never share these details with anyone!<br />
+    Keep it safe and secure at all times.
+  </div>
+</div>

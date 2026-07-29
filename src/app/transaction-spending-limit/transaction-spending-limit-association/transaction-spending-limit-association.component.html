@@ -1,0 +1,14 @@
+<div class="margin-bottom--small">
+  <code class="display--block">
+    {{ getOperationString() }}
+    {{ globalVars.formatTxCountLimit(associationLimitMapItem?.OpCount) }}
+    {{ associationLimitMapItem?.AssociationClass }}
+    {{ associationLimitMapItem?.AssociationType }}
+    associations on
+    {{
+      (appUser?.ProfileEntryResponse?.Username ||
+        associationLimitMapItem?.AppPublicKeyBase58Check
+        | truncateAddressOrUsername) || 'any app'
+    }}.
+  </code>
+</div>
