@@ -29,7 +29,7 @@ jobs:
         id: image
         run: |
           lower_repo=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          echo "name=ghcr.io/${lower_repo}/identity" >> "$GITHUB_OUTPUT"
+          echo "name=ghcr.io/${lower_repo}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GitHub Container Registry
         run: |
