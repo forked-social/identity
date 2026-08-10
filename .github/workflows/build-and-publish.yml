@@ -1,0 +1,70 @@
+name: Build and Publish Container Image
+
+# Manually triggered by a maintainer.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Optional extra image tag (in addition to the git SHA and "latest")'
+        required: false
+        default: ''
+
+# GITHUB_TOKEN needs read access to the repo contents and write
+# access to publish packages to GHCR.
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build and push image to ghcr.io
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # GHCR rejects uppercase characters, so lowercase the full
+      # "<owner>/<repo>" repository string once and reuse it.
+      - name: Compute lowercase GHCR image name
+        id: image
+        run: |
+          lower_repo=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "name=ghcr.io/${lower_repo}/identity" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | podman login ghcr.io \
+                --username "${{ github.actor }}" \
+                --password-stdin
+
+      # The identity Dockerfile has no custom build args; it simply
+      # runs `npm run build_prod`. The build context is the repo root
+      # (which IS the identity project dir after checkout) and the
+      # Dockerfile lives at ./Dockerfile.
+      - name: Build image with podman
+        run: |
+          podman build \
+            --tag "${{ steps.image.outputs.name }}:${{ github.sha }}" \
+            --tag "${{ steps.image.outputs.name }}:latest" \
+            --file ./Dockerfile \
+            .
+
+      - name: Push git SHA tag
+        run: podman push "${{ steps.image.outputs.name }}:${{ github.sha }}"
+
+      - name: Push latest tag
+        run: podman push "${{ steps.image.outputs.name }}:latest"
+
+      - name: Push user-supplied tag (if provided)
+        if: ${{ inputs.tag != '' }}
+        run: |
+          podman tag \
+            "${{ steps.image.outputs.name }}:${{ github.sha }}" \
+            "${{ steps.image.outputs.name }}:${{ inputs.tag }}"
+          podman push "${{ steps.image.outputs.name }}:${{ inputs.tag }}"
+
+      - name: Logout from GitHub Container Registry
+        if: always()
+        shell: bash
+        run: podman logout ghcr.io || true
