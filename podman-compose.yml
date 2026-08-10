@@ -1,0 +1,28 @@
+# Install at /opt/identity/podman-compose.yml (root:root 0644).
+#
+# The container image tag is intentionally NOT hard-coded here. The tag is
+# injected through the IMAGE variable: /opt/identity/deploy.sh writes a single
+# line `IMAGE=ghcr.io/blue-blip-droid/identity:<tag>` to /opt/identity/.deploy,
+# and the identity.service systemd unit loads that file via EnvironmentFile=
+# before running podman-compose. Hence the service `image:` below is ${IMAGE}.
+#
+# Installed at /opt/identity/podman-compose.yml. Both deploy.sh and the systemd
+# unit run `podman-compose -f /opt/identity/podman-compose.yml down/up -d`
+# against this exact file.
+
+services:
+  identity:
+    image: ${IMAGE:?IMAGE not set — run deploy.sh, which writes /opt/identity/.deploy}
+    container_name: identity
+    pull_policy: never
+    restart: unless-stopped
+    # Loopback-only on host port 8081 (frontend=8080, explorer=8082, keep them
+    # distinct). Container side is 82 because the identity image's Caddy listens
+    # on :82 per identity/Caddyfile (baked in at build time). Alternative: edit
+    # identity/Caddyfile (`:82` -> `:80`) and rebuild the image — NOT done here.
+    ports:
+      - "127.0.0.1:8081:82"
+    # environment:
+    #   - KEY=value
+    # volumes:
+    #   - ./data:/data
