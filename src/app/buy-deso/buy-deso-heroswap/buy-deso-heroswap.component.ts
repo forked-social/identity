@@ -29,6 +29,9 @@ export class BuyDeSoHeroSwapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     window.scroll(0, 0);
+    // HeroSwap buy flow is disabled unless environment.heroswapURL is set
+    // (the fork ships none: heroswap only settles against the OLD DeSo
+    // network, and the upstream DeSo Foundation affiliate key is removed).
     if (!environment.heroswapURL) {
       return;
     }
@@ -41,7 +44,6 @@ export class BuyDeSoHeroSwapComponent implements OnInit, OnDestroy {
         '&destinationTickers=DESO',
         '&destinationTicker=DESO',
         `&destinationAddress=${this.publicKey || ''}`,
-        `&affiliateAddress=BC1YLgHhMFnUrzQRpZCpK7TDxVGoGnAk539JqpYWgJ8uW9R7zCCdGHK`,
         `&now=${Date.now()}`,
       ].join('')
     );

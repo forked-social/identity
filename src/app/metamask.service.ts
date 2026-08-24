@@ -4,6 +4,7 @@ import { initializeProvider } from '@metamask/providers';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';
 import { ec } from 'elliptic';
 import { ethers } from 'ethers';
+import { environment } from '../environments/environment';
 import { GlobalVarsService } from './global-vars.service';
 
 @Injectable({
@@ -176,18 +177,30 @@ export class WalletProvider {
 
   async connectWallet(): Promise<void> {
     if (!this.#ethereumProvider && this.globalVars.isMobile()) {
+      // WalletConnect relays mobile wallet sessions and requires a project id
+      // registered at cloud.walletconnect.com. The fork ships none by default:
+      // the id comes from the runtime environment (WALLET_CONNECT_PROJECT_ID
+      // via /env-config.js). Fail fast with a clear message when it is unset
+      // instead of an opaque SDK error.
+      if (!environment.walletConnectProjectId) {
+        throw new Error(
+          'WalletConnect is not configured for this deployment. ' +
+            'Set the WALLET_CONNECT_PROJECT_ID environment variable to enable mobile wallet pairing.'
+        );
+      }
       // See: https://docs.walletconnect.com/2.0/web/providers/ethereum
       const provider = await EthereumProvider.init({
-        projectId: 'bea679efaf1bb0481c4974e65c510200',
+        projectId: environment.walletConnectProjectId,
         chains: [1 /* Mainnet */],
         optionalChains: [11155111 /* Sepolia */],
         optionalMethods: ['eth_requestAccounts'],
         metadata: {
+          // WalletConnect metadata shown to the user in their wallet app.
           description:
-            'DeSo Identity: The official wallet provider supported by the DeSo Foundation',
-          url: 'https://identity.deso.org',
-          icons: ['https://cryptologos.cc/logos/deso-deso-logo.svg'],
-          name: 'DeSo Identity',
+            'Forked Social Identity: wallet provider for forked.social',
+          url: 'https://identity.forked.social',
+          icons: ['https://forked.social/assets/diamond/logo-192.png'],
+          name: 'Forked Social Identity',
         },
         // NOTE: We can bypass the wallet connect QR modal by opening the
         // metamask deep link provided by the display_uri event. See

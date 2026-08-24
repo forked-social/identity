@@ -1,32 +1,40 @@
 // This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
+// `ng build --configuration production` replaces `environment.ts` with
+// `environment.prod.ts`. The list of file replacements can be found in
+// `angular.json`.
+
+// Runtime overrides: index.html loads /env-config.js (a plain asset) before
+// the Angular bundle; it defines window.__FORKED_RUNTIME_ENV__. In containers
+// run.sh regenerates that file at startup from environment variables. For
+// local dev, edit src/env-config.js (or define the global in an index.html
+// override). Unset values fall back to empty-string defaults below.
+const runtimeEnv: { [key: string]: string } =
+  (typeof window !== 'undefined' && (window as any).__FORKED_RUNTIME_ENV__) ||
+  {};
 
 export const environment = {
   production: false,
-  hostname: 'https://identity.deso.org',
-  nodeURL: 'https://node.deso.org',
-  fullAccessHostnames: [
-    'bitclout.com',
-    'bitclout.green',
-    'bitclout.blue',
-    'localhost',
-    'node.deso.org',
-    'signup.deso.org',
-    'signup.deso.com',
-    'openfund.com',
-  ],
+  // The canonical host of this identity service on the forked.social network.
+  hostname: 'https://identity.forked.social',
+  // The fork node (TLS-proxied to the backend API port; use the domain with no
+  // port suffix).
+  nodeURL: 'https://node.forked.social',
+  fullAccessHostnames: ['forked.social', 'localhost'],
   noAccessHostnames: [''],
   jumioSupported: false,
-  heroswapURL: 'https://heroswap.com',
-  hCaptchaSitekey: 'b358821b-bf3d-4662-a202-001eb9a769e2',
+  // Buy/swap provider disabled: heroswap only settles against the OLD DeSo
+  // network. An empty URL disables all HeroSwap iframes/flows.
+  heroswapURL: '',
+  // No hCaptcha account is registered for the fork. With an empty sitekey the
+  // captcha widget cannot render; captcha-based starter $DESO flows stay
+  // disabled unless the backend reports a captcha reward anyway.
+  hCaptchaSitekey: '',
+  // WalletConnect project id (register at cloud.walletconnect.com). Supplied
+  // at runtime via WALLET_CONNECT_PROJECT_ID (see /env-config.js above).
+  // Empty = mobile WalletConnect pairing disabled (see metamask.service.ts).
+  walletConnectProjectId: runtimeEnv.walletConnectProjectId || '',
+  // Google OAuth client id (drive.appdata scope) enabling the "back up seed
+  // to Google Drive" feature. Supplied at runtime via GOOGLE_DRIVE_CLIENT_ID.
+  // Empty = feature hidden/disabled (see google-drive.service.ts).
+  googleDriveClientId: runtimeEnv.googleDriveClientId || '',
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.

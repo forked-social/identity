@@ -52,14 +52,10 @@ export class JumioComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   getJumioURL(routeSuffix: string): string {
-    // Jumio URLs cannot be localhost, so default to bitclout.com if localhost.
+    // Jumio calls back to this origin (the fork host). The upstream
+    // localhost->bitclout.com rewrite is removed: there is no bitclout.com
+    // for the fork, and jumio is disabled (jumioSupported=false) anyway.
     let origin = window.location.origin;
-
-    const regExp = /(http(s?):\/\/localhost:\d{0,5})$/;
-    const match = origin.match(regExp);
-    if (match) {
-      origin = 'https://bitclout.com';
-    }
 
     const url = new URL(`${origin}/${routeSuffix}`);
     if (this.globalVars.network === Network.testnet) {

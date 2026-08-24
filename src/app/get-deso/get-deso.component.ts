@@ -47,7 +47,9 @@ export class GetDesoComponent implements OnInit {
   // Whether the user has failed the captcha, or the captcha timed out, or there was an issue verifying the captcha token.
   captchaFailed = false;
   // Whether the backend is offering rewards for solving captchas.
-  captchaAvailable = true;
+  // Also requires an hCaptcha sitekey to be configured; without one the
+  // captcha widget cannot render, so we skip straight to the alternatives.
+  captchaAvailable = !!environment.hCaptchaSitekey;
   // Loader shown while waiting for DESO to arrive.
   captchaFlowSpinner = false;
 
@@ -80,6 +82,9 @@ export class GetDesoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // HeroSwap buy flow is disabled unless environment.heroswapURL is set
+    // (the fork ships none: heroswap only settles against the OLD DeSo
+    // network, and the upstream DeSo Foundation affiliate key is removed).
     if (!environment.heroswapURL) {
       return;
     }
@@ -92,11 +97,6 @@ export class GetDesoComponent implements OnInit {
         '&destinationTickers=DESO',
         '&destinationTicker=DESO',
         `&destinationAddress=${this.publicKeyAdded || ''}`, // TODO: confirm publicKeyAdded is correct.
-        `&affiliateAddress=${
-          this.globalVars.network === Network.mainnet
-            ? 'BC1YLgHhMFnUrzQRpZCpK7TDxVGoGnAk539JqpYWgJ8uW9R7zCCdGHK'
-            : 'tBCKX1RURo8HRUcYVNrpYj1JZcY1yvWuhSi6NDfKXRudwQpDkAd8YC'
-        }`,
         `&now=${Date.now()}`,
       ].join('')
     );

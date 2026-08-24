@@ -4,7 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { logInteractionEvent } from 'src/app/interaction-event-helpers';
 import { environment } from '../environments/environment';
-import { DerivedKey, Network, UserProfile } from '../types/identity';
+import { DerivedKey, UserProfile } from '../types/identity';
 import { AccountService } from './account.service';
 import { CryptoService } from './crypto.service';
 import { GlobalVarsService } from './global-vars.service';
@@ -317,12 +317,8 @@ export class BackendAPIService {
     if (endpoint === undefined) {
       endpoint = this.endpoint;
     }
-    if (
-      this.globalVars.network === Network.testnet &&
-      this.endpoint.startsWith('https://node.deso.org')
-    ) {
-      endpoint = 'https://test.deso.org/api/v0';
-    }
+    // Fork: there is no upstream node rewrite. identity.forked.social always
+    // talks to https://node.forked.social (environment.nodeURL).
     return `${endpoint}/${path}`;
   }
 
@@ -384,6 +380,8 @@ export class BackendAPIService {
     token: string,
     publicKey: string
   ): Observable<{ Success: boolean; TxnHashHex: string }> {
+    // Fork: verify captchas against our own node instead of the retired
+    // upstream desoverification.com service.
     return this.jwtPost(
       'verify-captcha',
       publicKey,
@@ -391,7 +389,7 @@ export class BackendAPIService {
         Token: token,
         PublicKeyBase58Check: publicKey,
       },
-      'https://desoverification.com/api/v0'
+      `${environment.nodeURL}/api/v0`
     );
   }
 

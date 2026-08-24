@@ -11,6 +11,7 @@
     "build_prod": "./node_modules/.bin/ng build --configuration production --base-href / --deploy-url /",
     "ngcc": "./node_modules/.bin/ngcc --properties es2015",
     "format": "npx prettier --write src",
+    "derive-keys": "ts-node --project scripts/tsconfig.json scripts/derive-pubkey.ts",
     "prepare": "husky install",
     "pre-commit": "tsc --noEmit && pretty-quick --staged",
     "quality-check": "tsc --noEmit && npx prettier --check src"

@@ -181,7 +181,7 @@ export class AppComponent implements OnInit {
       });
     } else {
       // Identity currently doesn't have any management UIs that can be accessed directly
-      window.location.href = `https://deso.org`;
+      window.location.href = `https://forked.social`;
     }
 
     this.backendApiService.GetAppState().subscribe((res) => {

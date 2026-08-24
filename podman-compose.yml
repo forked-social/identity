@@ -2,7 +2,7 @@
 #
 # The container image tag is intentionally NOT hard-coded here. The tag is
 # injected through the IMAGE variable: /opt/identity/deploy.sh writes a single
-# line `IMAGE=ghcr.io/blue-blip-droid/identity:<tag>` to /opt/identity/.deploy,
+# line `IMAGE=ghcr.io/forked-social/identity:<tag>` to /opt/identity/.deploy,
 # and the identity.service systemd unit loads that file via EnvironmentFile=
 # before running podman-compose. Hence the service `image:` below is ${IMAGE}.
 #
@@ -22,7 +22,15 @@ services:
     # identity/Caddyfile (`:82` -> `:80`) and rebuild the image — NOT done here.
     ports:
       - "127.0.0.1:8081:82"
-    # environment:
-    #   - KEY=value
+    # Runtime config passthrough: run.sh generates /env-config.js from these
+    # before Caddy starts; the app bundle merges them over its compiled
+    # defaults. Blank values (the default) keep the features disabled.
+    environment:
+      # WalletConnect project id (cloud.walletconnect.com) enabling mobile
+      # wallet pairing in the identity app.
+      - WALLET_CONNECT_PROJECT_ID=
+      # Google OAuth client id (drive.appdata scope) enabling the "back up
+      # seed to Google Drive" option.
+      - GOOGLE_DRIVE_CLIENT_ID=
     # volumes:
     #   - ./data:/data

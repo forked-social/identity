@@ -31,6 +31,7 @@ import { IconsModule } from '../../icons/icons.module';
 import { CryptoService } from '../../crypto.service';
 import { SignUpBuyDesoComponent } from '../sign-up-buy-deso.component';
 import { AppRoutingModule, RouteNames } from 'src/app/app-routing.module';
+import { environment } from 'src/environments/environment';
 import { Network } from '../../../types/identity';
 import { BuyDeSoCompletePageComponent } from '../buy-deso-complete-page/buy-deso-complete-page.component';
 import { BuyDesoPageComponent } from '../buy-deso-page/buy-deso-page.component';
@@ -70,12 +71,16 @@ export class BuyDeSoComponent implements OnInit {
   keyIsCopied = false;
 
   BuyDeSoComponent = BuyDeSoComponent;
-  defaultBuyTabs = [
-    BuyDeSoComponent.BUY_WITH_HEROSWAP,
-    /*BuyDeSoComponent.BUY_WITH_USD, */ BuyDeSoComponent.BUY_ON_CB,
-  ];
+  // The HeroSwap (buy with crypto) tab is only offered when a swap provider is
+  // configured. The fork ships none: heroswap only settles against the OLD
+  // DeSo network.
+  defaultBuyTabs = environment.heroswapURL
+    ? [BuyDeSoComponent.BUY_WITH_HEROSWAP, /*BuyDeSoComponent.BUY_WITH_USD, */ BuyDeSoComponent.BUY_ON_CB]
+    : [BuyDeSoComponent.BUY_ON_CB];
   buyTabs = this.defaultBuyTabs;
-  activeTab = BuyDeSoComponent.BUY_WITH_HEROSWAP;
+  activeTab = environment.heroswapURL
+    ? BuyDeSoComponent.BUY_WITH_HEROSWAP
+    : BuyDeSoComponent.BUY_ON_CB;
   linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK };
 
   satoshisPerDeSoExchangeRate = 0;
@@ -211,7 +216,9 @@ export class BuyDeSoComponent implements OnInit {
     window.scroll(0, 0);
 
     // Add extra tabs
-    this.activeTab = BuyDeSoComponent.BUY_WITH_HEROSWAP;
+    this.activeTab = environment.heroswapURL
+      ? BuyDeSoComponent.BUY_WITH_HEROSWAP
+      : BuyDeSoComponent.BUY_ON_CB;
 
     if (!isNil(this.activeTabInput)) {
       this.activeTab = this.activeTabInput;

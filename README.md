@@ -6,6 +6,10 @@ DeSo Identity Service
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+## Runtime configuration
+
+`src/env-config.js` (served as `/env-config.js`) defines `window.__FORKED_RUNTIME_ENV__`, which overrides the compiled environment defaults — for local dev, set values there; in containers `run.sh` regenerates that file at startup from `WALLET_CONNECT_PROJECT_ID` / `GOOGLE_DRIVE_CLIENT_ID`.
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.

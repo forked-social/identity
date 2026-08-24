@@ -19,6 +19,13 @@ export class LogInOptionsComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  // Google Drive backup is only offered when an OAuth client id is configured
+  // (GOOGLE_DRIVE_CLIENT_ID via /env-config.js; empty = keep the option
+  // hidden, see google-drive.service.ts).
+  get googleDriveConfigured(): boolean {
+    return !!GoogleDriveService.CLIENT_ID;
+  }
+
   launchGoogle(): void {
     this.googleDrive.launchGoogle();
   }

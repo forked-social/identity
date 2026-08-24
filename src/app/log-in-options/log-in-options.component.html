@@ -21,7 +21,7 @@
       data-control-login-option="google"
       class="button--primary--outline button--medium margin-bottom--medium"
       (click)="launchGoogle()"
-      *ngIf="!globalVars.hideGoogle"
+      *ngIf="!globalVars.hideGoogle && googleDriveConfigured"
     >
       <img
         src="assets/google_logo.svg"

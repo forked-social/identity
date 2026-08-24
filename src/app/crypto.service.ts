@@ -25,14 +25,28 @@ export class CryptoService {
     private globalVars: GlobalVarsService
   ) {}
 
+  // Public-key Base58Check network prefix bytes for the forked-social network.
+  //
+  // These 3-byte prefixes were brute-forced so that Base58Check encodings of
+  // (prefix || 33-byte compressed secp256k1 public key) lead with the fork's
+  // chosen public prefixes:
+  //   mainnet: [0x05, 0x01, 0xed] -> every key leads with "FS1..." (e.g. FS13...)
+  //   testnet: [0x11, 0xc8, 0x7d] -> every key leads with "tFS..." (e.g. tFS2...)
+  //
+  // Upstream DeSo used [0xcd, 0x14, 0x00] -> "BC1..." and [0x11, 0xc2, 0x00]
+  // -> "tBC...", whose 4th character likewise varies only with the key bytes
+  // (real upstream keys read "BC1YL..." / "tBCK...", not literally "BC1..." +
+  // "1"; a constant 4th character of "1" is not achievable with a 3-byte
+  // prefix). These prefixes MUST be kept in sync with identity's CLI key
+  // derivation script (scripts/derive-pubkey.ts) and the backend fork params.
   static PUBLIC_KEY_PREFIXES = {
     mainnet: {
       bitcoin: [0x00],
-      deso: [0xcd, 0x14, 0x0],
+      deso: [0x05, 0x01, 0xed],
     },
     testnet: {
       bitcoin: [0x6f],
-      deso: [0x11, 0xc2, 0x0],
+      deso: [0x11, 0xc8, 0x7d],
     },
   };
 

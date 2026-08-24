@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 import { GoogleAuthState, Network } from '../types/identity';
 import { RouteNames } from './app-routing.module';
 import { GlobalVarsService } from './global-vars.service';
@@ -9,8 +10,11 @@ import { GlobalVarsService } from './global-vars.service';
   providedIn: 'root',
 })
 export class GoogleDriveService {
-  public static CLIENT_ID =
-    '48709226407-vuriktl4ub77gl5ifbsbsm3d2jnrshvt.apps.googleusercontent.com';
+  // Google OAuth client id (drive.appdata scope) for the "back up seed to
+  // Google Drive" feature. Sourced from the runtime environment
+  // (GOOGLE_DRIVE_CLIENT_ID via /env-config.js; see
+  // src/environments/environment.ts). Empty = feature disabled.
+  public static CLIENT_ID = environment.googleDriveClientId;
   public static DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 
   private accessToken: string | undefined;
@@ -70,6 +74,13 @@ export class GoogleDriveService {
   }
 
   public launchGoogle(): void {
+    // Feature disabled unless a Google OAuth client id is configured (see
+    // CLIENT_ID above). Navigating to Google with an empty client_id would
+    // only produce an OAuth error screen.
+    if (!GoogleDriveService.CLIENT_ID) {
+      return;
+    }
+
     const redirectUri = new URL(
       `${window.location.origin}/${RouteNames.AUTH_GOOGLE}`
     );

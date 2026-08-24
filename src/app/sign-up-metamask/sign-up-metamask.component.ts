@@ -57,7 +57,17 @@ export class SignUpMetamaskComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     if (this.globalVars.isMobile()) {
       this.currentScreen = SCREEN.LOADING;
-      await this.metamaskService.connectWallet();
+      try {
+        await this.metamaskService.connectWallet();
+      } catch (e) {
+        // Mobile wallet connection failed (WalletConnect is unset for this
+        // deployment or the wallet never paired). Surface the standard error
+        // state instead of an unhandled rejection behind the loading spinner.
+        this.currentScreen = SCREEN.CREATE_ACCOUNT;
+        this.metamaskState = METAMASK.ERROR;
+        this.errorMessage = `Can't connect to the wallet. Error: ${e}.`;
+        return;
+      }
     }
 
     // grab the currently connected wallet if there is one
